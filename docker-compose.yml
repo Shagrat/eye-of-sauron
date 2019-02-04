@@ -1,0 +1,38 @@
+version: '3.5'
+
+services:
+
+  web:
+    build:
+      context: sleepless
+      dockerfile: Dockerfile
+    image: web
+    container_name: web
+    ports:
+      - '8000:8000'
+    volumes:
+      - './sleepless:/usr/src/app'
+      - './data:/var/data'
+    command: gunicorn -b 0.0.0.0:8000 app.wsgi:app
+
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  celery:
+    image: web
+    volumes:
+      - './sleepless:/usr/src/app'
+      - './sleepless/logs:/usr/src/app/logs'
+    command: celery -A app.tasks.monitoring worker --logfile=logs/celery.log
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - web
+      - redis
+
+  redis:
+    image: redis:3.2.11
