@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Shagrat/sleepless.svg?branch=master)](https://travis-ci.org/Shagrat/sleepless)
+
 # sleepless
 Site monitoring tool for test assignment
 
