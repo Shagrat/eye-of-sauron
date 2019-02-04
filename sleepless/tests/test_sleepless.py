@@ -43,3 +43,7 @@ def test_modify_modify(app, client):
 def test_modify_delete(app, client):
     rv = client.delete('/api/sites/', json={'url': 'https://amazon.com'})
     assert rv.status == '204 NO CONTENT'
+
+def test_monitor(app, client):
+    rv = client.get('/api/monitoring/')
+    assert rv.status == '200 OK'
