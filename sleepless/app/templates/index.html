@@ -1,0 +1,46 @@
+<html>
+
+<div class="grid-container">
+  <div class="grid-x grid-margin-x">
+      <div id="result" class="cell">
+          <strong>Loading...</strong>
+      </div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css" />
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+
+<script>
+    $(function () {
+        $.get( "/api/monitoring/", function( data ) {
+            let target_div = $('#result');
+            target_div.empty();
+            if (data.length > 0){
+                let table = document.createElement("table");
+                let head = table.createTHead();
+                let row = head.insertRow();
+                let cell = row.insertCell();
+                cell.innerHTML = 'URL';
+                cell = row.insertCell();
+                cell.innerHTML = 'Status';
+                let body = table.createTBody();
+                for (let i =0; i< data.length; i++){
+                    let row = body.insertRow();
+                    let cell = row.insertCell();
+                    cell.innerHTML = data[i]['url'];
+                    cell = row.insertCell();
+                    cell.innerHTML = data[i]['last_status'];
+                }
+                target_div.append(table);
+            }else{
+                target_div.text('No sites data');
+            }
+        });
+    })
+</script>
+
+</html>
