@@ -6,6 +6,9 @@ from app.views.dashboard import ShowDashboard
 
 def create_app():
     app = Flask(__name__)
+    app.config.update(
+        DATA_PATH='/var/data/sites.yml'
+    )
     blueprint = Blueprint('api', __name__, url_prefix='/api')
     api.init_app(blueprint)
     api.add_namespace(ns_sites)
