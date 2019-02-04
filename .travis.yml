@@ -4,8 +4,3 @@ install:
   - pip install -r sleepless/requirements.txt
 script:
   - pytest
-  - bash ./scripts/update-pages-docs.sh
-env:
-  global:
-    - GITHUB_REPO: "Shagrat/sleepless"
-    - secure: "llJL8YChxaIp3sDryWaCXFgZRKIdgPS5VPQAIaHw6PSoMOeBoqm7C1hVIMzhU7LxC1wqZ3UxbaNUb7TM+REX1MdaMB4jVrp0xAdMDFGcYbRvG65aL20dDRMg1ozV0TAPanbee6y1DU0IEB7XgHD7pnOK0SBy7FtZ6q5ra9RNgljy+ABnm32whQJjUPVDLI3UeYZ1eNzo049RZxY0zyUrBjZl4bSYxIXWYFuffgU/yPh5tZp3lQXnamzgFNxmon21VurWhrIqjK77NF1GzjInT+h52YKwMTmRY4DF43ikZ9qRBdvOCxVllhbTEjgFrKaJ3+7/umZQT1K1T3cST8fGFqG84q3czlljypCqNsyPQkbSrE6r7MAxzDMSUR15v2PFvEWw6NNVKdn/hTn6/hed0YvdiPMAigw0MJNE4PaqX6+OjLY75Y40aSK7v9k2yV0htV1oCtpc7pDNo03ah4ctVIubQbrSbTxL9zoibxidCixFjg010l/4iQujLb+0zM7eceNuIpQnW23yzM17hMCETqSsxlKehJde9G0A3ZfJS0c/86FAmNzJnxR87Av0IRroIwdiLrSh6MGS9YZrTbJkjioZT9XVkKBmzPNzWvImhR62IhPEhWaWg4IiZYudNX4bT8wFJg2a/5fGFT0iq/cYpyh5/D5vu8WPwyab2YeKnXQ="
