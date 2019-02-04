@@ -1,6 +1,5 @@
 #!/bin/bash
 set -o errexit
-rm docs/swagger.json
 git config --global user.email "nobody@nobody.org"
 git config --global user.name "Travis CI"
 python sleepless/swagger_export.py
