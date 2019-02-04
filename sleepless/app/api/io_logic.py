@@ -2,7 +2,7 @@ import yaml
 
 
 def get_sites_from_io():
-    with open('/home/shagrat/work/eye-of-sauron/data/sites.yml', 'a+') as stream:
+    with open('/var/data/sites.yml', 'a+') as stream:
         stream.seek(0)
         try:
             sites = list(yaml.load(stream))
@@ -26,7 +26,7 @@ def get_sites_from_io():
 
 
 def update_sites_in_io(url, updated_url=False, delete=False):
-    with open('/home/shagrat/work/eye-of-sauron/data/sites.yml', 'a+') as stream:
+    with open('/var/data/sites.yml', 'a+') as stream:
         stream.seek(0)
         try:
             sites = list(yaml.load(stream))
@@ -61,6 +61,6 @@ def update_sites_in_io(url, updated_url=False, delete=False):
         }
     else:
         parsed.pop(url, None)
-    with open('/home/shagrat/work/eye-of-sauron/data/sites.yml', 'w') as stream:
+    with open('/var/data/sites.yml', 'w') as stream:
         yaml.dump([v for k, v in parsed.items()], stream)
     return parsed
