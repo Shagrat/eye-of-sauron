@@ -14,3 +14,6 @@ Site monitoring tool for test assignment
 - https://www.google.ca/
 - https://www.amazon.com
 ```
+
+# API Docs
+https://shagrat.github.io/sleepless/
