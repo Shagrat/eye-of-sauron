@@ -1,3 +1,6 @@
+"""
+Contains endpoints for API
+"""
 import time
 import datetime
 import requests
@@ -29,6 +32,10 @@ site_status = api.model('Site to monitor', {
 
 
 def test_sites():
+    """
+    Test sites availability and returns List of sites objects
+    :return: List of sites objects
+    """
     sites = get_sites_from_io().items()
     for _key, domain in sites:
         start = time.time()
@@ -56,7 +63,9 @@ def test_sites():
 
 @ns_sites.route('/')
 class SitesCollection(Resource):
-
+    """
+    Contains endpoints for listing, adding, deleting and updating sites objects
+    """
     @staticmethod
     @api.marshal_list_with(site)
     def get():
@@ -129,7 +138,9 @@ class SitesCollection(Resource):
 
 @ns_monitoring.route('/')
 class Monitoring(Resource):
-
+    """
+    Contains endpoint for site monitoring
+    """
     @staticmethod
     @api.marshal_list_with(site_status)
     def get():

@@ -1,3 +1,6 @@
+"""
+Module contains functions to work with IO: read and update configuration file
+"""
 import os
 import yaml
 
@@ -5,6 +8,10 @@ DATA_PATH = os.environ.get('DATA_PATH')
 
 
 def get_sites_from_io():
+    """
+    Reads config file and returns dictionary with all sites from config
+    :return: Dict with sites
+    """
     with open(DATA_PATH, 'a+') as stream:
         stream.seek(0)
         try:
@@ -29,6 +36,15 @@ def get_sites_from_io():
 
 
 def update_sites_in_io(url, updated_url=False, delete=False):
+    """
+    Reads config file and updates it accordingly to provided data, returns
+    dictionary with updated sites
+    :return: Dict with sites
+    :param url: Url of site to update
+    :param updated_url: New url of site
+    :param delete: Boolean if site should be removed
+    :return: Dict with sites
+    """
     with open(DATA_PATH, 'a+') as stream:
         stream.seek(0)
         try:
