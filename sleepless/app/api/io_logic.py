@@ -1,10 +1,11 @@
+import os
 import yaml
-from flask import current_app
+
+DATA_PATH = os.environ.get('DATA_PATH')
 
 
 def get_sites_from_io():
-    print(current_app.config.get('DATA_PATH'))
-    with open(current_app.config.get('DATA_PATH'), 'a+') as stream:
+    with open(DATA_PATH, 'a+') as stream:
         stream.seek(0)
         try:
             sites = list(yaml.load(stream))
@@ -28,7 +29,7 @@ def get_sites_from_io():
 
 
 def update_sites_in_io(url, updated_url=False, delete=False):
-    with open(current_app.config.get('DATA_PATH'), 'a+') as stream:
+    with open(DATA_PATH, 'a+') as stream:
         stream.seek(0)
         try:
             sites = list(yaml.load(stream))
@@ -63,6 +64,6 @@ def update_sites_in_io(url, updated_url=False, delete=False):
         }
     else:
         parsed.pop(url, None)
-    with open(current_app.config.get('DATA_PATH'), 'w') as stream:
+    with open(DATA_PATH, 'w') as stream:
         yaml.dump([v for k, v in parsed.items()], stream)
     return parsed

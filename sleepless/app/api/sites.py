@@ -3,9 +3,9 @@ import datetime
 import requests
 from flask import request
 from flask_restplus import Resource, fields
+from werkzeug.exceptions import BadRequest
 from app.api.restplus import api
 from app.api.io_logic import get_sites_from_io, update_sites_in_io
-from werkzeug.exceptions import BadRequest
 
 
 ns_sites = api.namespace('sites', description='Operations with sites')
@@ -28,19 +28,47 @@ site_status = api.model('Site to monitor', {
 })
 
 
+def test_sites():
+    sites = get_sites_from_io().items()
+    for _key, domain in sites:
+        start = time.time()
+        try:
+            test_request = requests.get(domain.get('url'), timeout=2)
+        except requests.exceptions.MissingSchema:
+            domain['last_status'] = 'No schema supplied'
+            continue
+        except requests.exceptions.ConnectionError:
+            domain['last_status'] = 'Connection Error'
+            continue
+        except Exception:
+            domain['last_status'] = 'Error'
+            continue
+        elapsed = time.time() - start
+        if test_request.status_code == requests.codes.ok and elapsed <= 0.25:
+            domain['last_status'] = 'OK'
+        elif test_request.status_code == requests.codes.ok:
+            domain['last_status'] = 'Slow'
+        else:
+            domain['last_status'] = 'Error'
+        domain['last_checked'] = datetime.datetime.fromtimestamp(start)
+        return sites
+
+
 @ns_sites.route('/')
 class SitesCollection(Resource):
 
+    @staticmethod
     @api.marshal_list_with(site)
-    def get(self):
+    def get():
         """
         Returns list of sites.
         """
         return [v for k, v in get_sites_from_io().items()]
 
+    @staticmethod
     @api.response(201, 'URL successfully added.')
     @api.expect(site)
-    def post(self):
+    def post():
         """
         Adds new site to monitor.
         * Send a JSON object with the URL in request body.
@@ -57,9 +85,10 @@ class SitesCollection(Resource):
         sites = update_sites_in_io(data.get('url'))
         return [v for k, v in sites.items()], 201
 
+    @staticmethod
     @api.expect(site_update)
     @api.response(204, 'Site successfully updated.')
-    def put(self):
+    def put():
         """
         Updates site url.
         * Send a JSON object with the new and old URL in request body.
@@ -77,10 +106,10 @@ class SitesCollection(Resource):
         update_sites_in_io(data.get('url'), updated_url=data.get('new_url'))
         return None, 204
 
-
+    @staticmethod
     @api.expect(site)
     @api.response(204, 'Site successfully deleted from monitoring.')
-    def delete(self):
+    def delete():
         """
         Deletes site from monitoring.
         * Send a JSON object with the URL in request body.
@@ -101,31 +130,11 @@ class SitesCollection(Resource):
 @ns_monitoring.route('/')
 class Monitoring(Resource):
 
+    @staticmethod
     @api.marshal_list_with(site_status)
-    def get(self):
+    def get():
         """
         Returns list of sites with current status.
         """
-        sites = get_sites_from_io().items()
-        for key, site in sites:
-            start = time.time()
-            try:
-                r = requests.get(site.get('url'), timeout=2)
-            except requests.exceptions.MissingSchema:
-                site['last_status'] = 'No schema supplied'
-                continue
-            except requests.exceptions.ConnectionError:
-                site['last_status'] = 'Connection Error'
-                continue
-            except Exception:
-                site['last_status'] = 'Error'
-                continue
-            elapsed = time.time() - start
-            if r.status_code == requests.codes.ok and elapsed <= 0.25:
-                site['last_status'] = 'OK'
-            elif r.status_code == requests.codes.ok:
-                site['last_status'] = 'Slow'
-            else:
-                site['last_status'] = 'Error'
-            site['last_checked'] = datetime.datetime.fromtimestamp(start)
-        return [v for k, v in sites]
+
+        return [v for k, v in test_sites()]
