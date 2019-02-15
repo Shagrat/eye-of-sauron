@@ -49,13 +49,16 @@ def test_sites():
         except requests.exceptions.ConnectionError:
             domain['last_status'] = 'Connection Error'
             continue
+        except requests.exceptions.RequestException:
+            domain['last_status'] = 'Broad Request Error'
+            continue
         elapsed = time.time() - start
         if test_request.status_code == requests.codes.ok and elapsed <= 0.25:
             domain['last_status'] = 'OK'
         elif test_request.status_code == requests.codes.ok:
             domain['last_status'] = 'Slow'
         else:
-            domain['last_status'] = 'Error'
+            domain['last_status'] = 'Error {}'.format(test_request.status_code)
         domain['last_checked'] = datetime.datetime.fromtimestamp(start)
     return sites
 
