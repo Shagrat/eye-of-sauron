@@ -12,7 +12,7 @@ Site monitoring tool for test assignment
 # sites.yml example
 ```
 - https://www.google.ca/
-- https://www.amazon.com
+- https://twitter.com/
 ```
 
 # API Docs
