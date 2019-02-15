@@ -4,7 +4,7 @@ Module contains functions to work with IO: read and update configuration file
 import os
 import yaml
 
-DATA_PATH = os.environ.get('DATA_PATH')
+
 
 
 def get_sites_from_io():
@@ -12,7 +12,7 @@ def get_sites_from_io():
     Reads config file and returns dictionary with all sites from config
     :return: Dict with sites
     """
-    with open(DATA_PATH, 'a+') as stream:
+    with open(os.environ.get('DATA_PATH'), 'a+') as stream:
         stream.seek(0)
         try:
             sites = list(yaml.load(stream))
@@ -45,7 +45,7 @@ def update_sites_in_io(url, updated_url=False, delete=False):
     :param delete: Boolean if site should be removed
     :return: Dict with sites
     """
-    with open(DATA_PATH, 'a+') as stream:
+    with open(os.environ.get('DATA_PATH'), 'a+') as stream:
         stream.seek(0)
         try:
             sites = list(yaml.load(stream))
@@ -80,6 +80,6 @@ def update_sites_in_io(url, updated_url=False, delete=False):
         }
     else:
         parsed.pop(url, None)
-    with open(DATA_PATH, 'w') as stream:
+    with open(os.environ.get('DATA_PATH'), 'w') as stream:
         yaml.dump([v for k, v in parsed.items()], stream)
     return parsed
