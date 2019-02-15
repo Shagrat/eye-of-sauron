@@ -13,34 +13,54 @@
   src="https://code.jquery.com/jquery-2.2.4.min.js"
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
   crossorigin="anonymous"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 
 <script>
+
+    function build_table_from_data(data){
+        let target_div = $('#result');
+        target_div.empty();
+        if (data.length > 0){
+            let table = document.createElement("table");
+            let head = table.createTHead();
+            let row = head.insertRow();
+            let cell = row.insertCell();
+            cell.innerHTML = 'URL';
+            cell = row.insertCell();
+            cell.innerHTML = 'Status';
+            let body = table.createTBody();
+            for (let i =0; i< data.length; i++){
+                let row = body.insertRow();
+                let cell = row.insertCell();
+                cell.innerHTML = data[i]['url'];
+                cell = row.insertCell();
+                cell.innerHTML = data[i]['last_status'];
+            }
+            target_div.append(table);
+        }else{
+            target_div.text('No sites data');
+        }
+    }
+
     $(function () {
         $.get( "/api/monitoring/", function( data ) {
-            let target_div = $('#result');
-            target_div.empty();
-            if (data.length > 0){
-                let table = document.createElement("table");
-                let head = table.createTHead();
-                let row = head.insertRow();
-                let cell = row.insertCell();
-                cell.innerHTML = 'URL';
-                cell = row.insertCell();
-                cell.innerHTML = 'Status';
-                let body = table.createTBody();
-                for (let i =0; i< data.length; i++){
-                    let row = body.insertRow();
-                    let cell = row.insertCell();
-                    cell.innerHTML = data[i]['url'];
-                    cell = row.insertCell();
-                    cell.innerHTML = data[i]['last_status'];
-                }
-                target_div.append(table);
-            }else{
-                target_div.text('No sites data');
-            }
+            build_table_from_data(data);
+        });
+    	var socket = io.connect('http://' + document.domain + ':' + location.port);
+        socket.on('connect', function(){
+            socket.emit('connection', {connection_confirmation: 'Connection stablished'});
+        });
+
+        socket.on('confirmation', function (message) {
+            console.log(message.connection_confirmation)
+        });
+        socket.on('sites_event', function (message) {
+            console.log(message.results);
+            build_table_from_data(message.results);
         });
     })
 </script>
+
+
 
 </html>
