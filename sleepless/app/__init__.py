@@ -1,11 +1,13 @@
+"""
+This module stores functions to initialize app
+"""
 import os
-
 from celery import Celery
 from flask import Flask, Blueprint
+from flask_socketio import SocketIO, emit
 from app.api.restplus import api
 from app.api.sites import ns_sites, ns_monitoring
 from app.views.dashboard import ShowDashboard
-from flask_socketio import SocketIO, emit
 
 
 CELERY_BROKER = os.environ.get('CELERY_BROKER')
@@ -50,6 +52,9 @@ def create_celery_app(app=None):
     celery.conf.update(app.config)
 
     class ContextTask(celery.Task):
+        """
+        Updated ContextTask Celery class to provide Flask context
+        """
         def __call__(self, *args, **kwargs):
             with app.app_context():
                 return self.run(*args, **kwargs)
