@@ -4,8 +4,9 @@ from app import create_app
 
 
 @pytest.fixture
-def app():
+def app(monkeypatch):
     app = create_app()
+    monkeypatch.setenv('DATA_PATH', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sites.yml'))
     app.config.update(
         DATA_PATH=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sites.yml')
     )
@@ -14,6 +15,7 @@ def app():
         os.remove(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sites.yml'))
     except:
         pass
+
 
 @pytest.fixture
 def client(app):

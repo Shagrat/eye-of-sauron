@@ -17,3 +17,12 @@ Site monitoring tool for test assignment
 
 # API Docs
 https://shagrat.github.io/sleepless/
+
+
+# SocketIO
+SocketIO and Celery (with RabbitMQ backend) added for background polling, emitting  will occur every 30 seconds
+
+# Flower
+http://localhost:5555
+
+ 

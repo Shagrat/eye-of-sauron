@@ -13,35 +13,46 @@ services:
     volumes:
       - './sleepless:/usr/src/app'
       - './data:/var/data'
+    links:
+      - rabbit
     command: gunicorn -b 0.0.0.0:8000 app.wsgi:app
-
     environment:
-      - CELERY_BROKER=redis://redis:6379/0
-      - CELERY_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER=amqp://rabbit:ballon@rabbit:5672
+      - DATA_PATH=/var/data/sites.yml
     depends_on:
-      - redis
+      - rabbit
 
   celery:
     image: web
     volumes:
       - './sleepless:/usr/src/app'
       - './sleepless/logs:/var/logs'
-    command: celery -A tasks.monitoring worker --loglevel=info  --logfile=logs/celery.log
+      - './data:/var/data'
+    command: celery -A app.tasks.monitoring worker  -B --loglevel=info  --logfile=logs/celery.log
     environment:
-      - CELERY_BROKER=redis://redis:6379/0
-      - CELERY_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER=amqp://rabbit:ballon@rabbit:5672
+      - DATA_PATH=/var/data/sites.yml
+    links:
+      - rabbit
     depends_on:
       - web
-      - redis
+      - rabbit
 
   monitor:
     image: web
     ports:
       - '5555:5555'
-    command:  flower -A tasks.monitoring --port=5555 --broker=redis://redis:6379/0
+    command:  flower -A app.tasks.monitoring --port=5555 --broker=amqp://rabbit:ballon@rabbit:5672
     depends_on:
       - web
-      - redis
+      - rabbit
 
-  redis:
-    image: redis:3.2.11
+  rabbit:
+      hostname: rabbit
+      image: rabbitmq:3.7-management-alpine
+      environment:
+          - RABBITMQ_DEFAULT_USER=rabbit
+          - RABBITMQ_DEFAULT_PASS=ballon
+      ports:
+          - "15672:15672"
+          - "5672:5672"

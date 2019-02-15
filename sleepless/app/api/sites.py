@@ -37,7 +37,9 @@ def test_sites():
     :return: List of sites objects
     """
     sites = get_sites_from_io().items()
+    print(sites)
     for _key, domain in sites:
+        print(domain)
         start = time.time()
         try:
             test_request = requests.get(domain.get('url'), timeout=2)
@@ -47,9 +49,6 @@ def test_sites():
         except requests.exceptions.ConnectionError:
             domain['last_status'] = 'Connection Error'
             continue
-        except Exception:
-            domain['last_status'] = 'Error'
-            continue
         elapsed = time.time() - start
         if test_request.status_code == requests.codes.ok and elapsed <= 0.25:
             domain['last_status'] = 'OK'
@@ -58,7 +57,7 @@ def test_sites():
         else:
             domain['last_status'] = 'Error'
         domain['last_checked'] = datetime.datetime.fromtimestamp(start)
-        return sites
+    return sites
 
 
 @ns_sites.route('/')
@@ -147,5 +146,4 @@ class Monitoring(Resource):
         """
         Returns list of sites with current status.
         """
-
         return [v for k, v in test_sites()]
