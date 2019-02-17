@@ -24,5 +24,3 @@ SocketIO and Celery (with RabbitMQ backend) added for background polling, emitti
 
 # Flower
 http://localhost:5555
-
- 
